@@ -51,11 +51,21 @@ const subtierSchema = new Schema(
       type: String,
       maxLength: 1000
     },
-    tags: {
-      type: [String], 
-      maxLength: [30, "Length should be between 3-20 characters"],
-      validate: [arrayLimit, '{PATH} exceeds the limit of 20 tags'],
-    },
+    flairs: {
+      type: [
+        {
+          name: {
+            type: String,
+            required: true,
+          },
+          color: {
+            type: String,
+            default: "#000000", // Default color (black)
+          }
+        }
+      ],
+      
+    }
   },
   { timestamps: true }
 );

@@ -54,7 +54,6 @@ app.use("/api/v1/comments", commentRouter);
 app.use("/api/v1/likes", likeRouter);
 app.use("/api/v1/posts", postRouter);
 app.use("/api/v1/moderation", moderationRouter);
-app.use("/api/v1/flair", flairRouter);
 app.use("/api/v1/report", reportRouter);
 app.use("/api/v1/search", searchRouter);
 

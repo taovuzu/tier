@@ -1,5 +1,4 @@
-import mongoose ,{Schema} from "mongoose";
-
+import mongoose, { Schema } from "mongoose";
 
 const postSchema = new Schema(
   {
@@ -7,23 +6,33 @@ const postSchema = new Schema(
       type: String,
       required: true,
     },
-    subtier : {
-      type: String,
+    subtier: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Subtier",
       required: true,
     },
-    title : {
+    title: {
       type: String,
       required: true,
       minLength: [3, "Length should be between 3-50 characters"],
       maxLength: [50, "Length should be between 3-50 characters"],
     },
-    spoiler : {
+    flair: {
+      name: {
+        type: String,
+      },
+      color: {
+        type: String,
+      },
+    },
+    spoiler: {
       type: Boolean,
-      default: false
+      default: false,
     },
     contentType: {
-      types: ["VIDEO","IMAGE","TEXT"],
-      required: true
+      type: String,
+      enum: ["VIDEO", "IMAGE", "TEXT"],
+      required: true,
     },
     content: {
       type: String,
@@ -34,25 +43,47 @@ const postSchema = new Schema(
     },
     matureContent: {
       type: Boolean,
-      default: false
+      default: false,
     },
     upVotesCount: {
       type: Number,
-      default: 0
+      default: 0,
     },
     downVotesCount: {
       type: Number,
-      default: 0
+      default: 0,
     },
-    view:{
+    view: {
       type: Number,
-      default: 0
+      default: 0,
     },
     deletionFlag: {
       type: Boolean,
-      default: false
+      default: false,
     },
-  },{timestamps: true}
+  },
+  { timestamps: true }
 );
+
+// Middleware to include flair details
+postSchema.pre("save", async function (next) {
+  if (this.flair && this.subtier) {
+    // Fetch the associated subtier
+    const subtier = await mongoose.model("Subtier").findById(this.subtier);
+    if (!subtier) {
+      throw new Error(`Subtier with ID ${this.subtier} does not exist.`);
+    }
+
+    // Check if the flair exists in the subtier
+    const flairDetails = subtier.flairs.find((flair) => flair.name === this.flair.name);
+    if (!flairDetails) {
+      throw new Error(`Flair "${this.flair.name}" is not valid for the subtier "${subtier.subtierUsername}".`);
+    }
+
+    // Include flair details in the post
+    this.flair.color = flairDetails.color;
+  }
+  next();
+});
 
 export const Post = mongoose.model("Post", postSchema);
