@@ -17,14 +17,14 @@ const postSchema = new Schema(
       minLength: [3, "Length should be between 3-50 characters"],
       maxLength: [50, "Length should be between 3-50 characters"],
     },
-    flair: {
-      name: {
-        type: String,
-      },
-      color: {
-        type: String,
-      },
-    },
+    // flair: {
+    //   name: {
+    //     type: String,
+    //   },
+    //   color: {
+    //     type: String,
+    //   },
+    // },
     spoiler: {
       type: Boolean,
       default: false,

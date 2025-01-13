@@ -13,11 +13,11 @@ export const SOCIAL_LINKS = {
   FACEBOOK: "FACEBOOK"
 };
 export const AVAILABLESOCIAL_LINKS = Object.values(SOCIAL_LINKS);
-export const PERMISSIONS = {
-  LEVEL1: "level1",
-  LEVEL2: "level2",
-  LEVEL3: "level3",
-  LEVEL4: "level4"
-};
+// export const PERMISSIONS = {
+//   LEVEL1: "level1",
+//   LEVEL2: "level2",
+//   LEVEL3: "level3",
+//   LEVEL4: "level4"
+// };
 
-export const SUBTIER_PRIVACY_FLAG = ["private", "protected", "public"];
+// export const SUBTIER_PRIVACY_FLAG = ["private", "protected", "public"];

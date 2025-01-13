@@ -17,6 +17,10 @@ const voteSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Comment"
     },
+    value: {
+      type: Boolean,
+      req: true
+    }
   },{timestamps: true}
 );
 

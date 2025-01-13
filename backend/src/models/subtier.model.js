@@ -26,11 +26,11 @@ const subtierSchema = new Schema(
             ref: "UserProfile",
             required: true,
           },
-          permissions: {
-            type: [String], // Array of strings to allow multiple permissions
-            enum: Object.values(PERMISSIONS), // Restricts values to valid permissions
-            required: true,
-          },
+          // permissions: {
+          //   type: [String], // Array of strings to allow multiple permissions
+          //   enum: Object.values(PERMISSIONS), // Restricts values to valid permissions
+          //   required: true,
+          // },
         },
       ],
       validate: [arrayLimit, '{PATH} exceeds the limit of 20 admins'],
@@ -51,21 +51,21 @@ const subtierSchema = new Schema(
       type: String,
       maxLength: 1000
     },
-    flairs: {
-      type: [
-        {
-          name: {
-            type: String,
-            required: true,
-          },
-          color: {
-            type: String,
-            default: "#000000", // Default color (black)
-          }
-        }
-      ],
+    // flairs: {
+    //   type: [
+    //     {
+    //       name: {
+    //         type: String,
+    //         required: true,
+    //       },
+    //       color: {
+    //         type: String,
+    //         default: "#000000", // Default color (black)
+    //       }
+    //     }
+    //   ],
       
-    }
+    // }
   },
   { timestamps: true }
 );

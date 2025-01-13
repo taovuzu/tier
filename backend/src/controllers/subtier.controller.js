@@ -5,7 +5,7 @@ import mongoose from "mongoose";
 import { Post } from "../models/post.model.js";
 import { Subtier } from "../models/subtier.model.js";
 import { subtierFollower } from "../models/subtierFollower.model.js";
-import { PERMISSIONS,SUBTIER_PRIVACY_FLAG } from "../constants.js";
+import { PERMISSIONS, SUBTIER_PRIVACY_FLAG } from "../constants.js";
 
 const getSubtierDetails = asyncHandler(async (req, res) => {
   const subtierUsername = req.params;
@@ -128,7 +128,7 @@ const updateSubtierBanner = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, updatedSubtierDetails, "Banner changed successfully"));
 });
 
-const updateSubtierPrivacyFlag = asyncHandler(async (req, res) => {
+const createSubtier = asyncHandler(async (req, res) => {
 
 });
 
@@ -136,21 +136,6 @@ const updateSubtierDetails = asyncHandler(async (req, res) => {
 
 });
 
-const removePostFromSubtier = asyncHandler(async (req, res) => {
-
-});
-
-const removeCommentFromSubtier = asyncHandler(async (req, res) => {
-
-});
-
-const removeAdminFromSubtier = asyncHandler(async (req, res) => {
-
-});
-
-const removeUserFromSubtier = asyncHandler(async (req, res) => {
-
-});
 
 const deleteSubtier = asyncHandler(async (req, res) => {
 
@@ -168,14 +153,6 @@ const addModeratorToSubtier = asyncHandler(async (req, res) => {
 
 });
 
-const addFlair = asyncHandler(async (req, res) => {
-
-});
-
-const deleteFlair = asyncHandler(async (req, res) => {
-
-});
-
 export {
-  getSubtierDetails, updateSubtierAvatar, updateSubtierBanner, updateSubtierPrivacyFlag, updateSubtierDetails, removePostFromSubtier, removeCommentFromSubtier, removeAdminFromSubtier, removeUserFromSubtier, deleteSubtier, getSubtierPosts, getSubtierModerators, addModeratorToSubtier, addFlair, deleteFlair, followSubtier, unfollowSubtier
+  getSubtierDetails,  updateSubtierAvatar,  updateSubtierBanner,  createSubtier,  updateSubtierDetails,  deleteSubtier,  getSubtierPosts,  getSubtierModerators,  addModeratorToSubtier,  followSubtier,  unfollowSubtier
 }
