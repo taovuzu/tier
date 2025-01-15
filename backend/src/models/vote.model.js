@@ -5,15 +5,15 @@ import { Comment } from "./comment.model";
 
 const voteSchema = new Schema(
   {
-    voter: {
+    voterId: {
       type: Schema.Types.ObjectId,
       ref: "User"
     },
-    post : {
+    postId : {
       type: Schema.Types.ObjectId,
       ref: "Post"
     },
-    comment : {
+    commentId : {
       type: Schema.Types.ObjectId,
       ref: "Comment"
     },
