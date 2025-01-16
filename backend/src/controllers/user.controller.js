@@ -88,7 +88,7 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Email is not verified");
   }
 
-  const existingUser = await User.findOne({ username,email });
+  const existingUser = await User.findOne({ username });
 
   if (existingUser) {
     throw new ApiError(409, "Username already exist");
