@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
-import { Subtier } from "./subtier.model";
-import { User } from "./user.model";
+import { Subtier } from "./subtier.model.js";
+import { User } from "./user.model.js";
 
 const subtierFollowerSchema = new Schema(
   {

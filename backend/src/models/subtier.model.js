@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
-import { UserProfile } from "./profile.model";
-import { PERMISSIONS, SUBTIER_PRIVACY_FLAG } from "../constants";
+import { UserProfile } from "./profile.model.js";
+// import { SUBTIER_PRIVACY_FLAG } from "../constants.js";
 
 const subtierSchema = new Schema(
   {
@@ -13,11 +13,11 @@ const subtierSchema = new Schema(
       maxLength: [30, "Length should be between 3-20 characters"],
       match: [/^[a-zA-Z0-9_]+$/, "Username can only contain a-z, A-Z, 0-9, or underscore (_)"],
     },
-    privacyFlag: {
-      type: String,
-      enum: SUBTIER_PRIVACY_FLAG, // Assumes this is an array of strings
-      required: true,
-    },
+    // privacyFlag: {
+    //   type: String,
+    //   enum: SUBTIER_PRIVACY_FLAG, // Assumes this is an array of strings
+    //   required: true,
+    // },
     admins: {
       type: [
         {

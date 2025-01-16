@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import mongooseAggregatePaginate from 'mongoose-aggregate-paginate-v2';
 
 const postSchema = new Schema(
   {
@@ -41,7 +42,7 @@ const postSchema = new Schema(
         url: { type: String, required: true },
         publicId: { type: String, required: true }, // To support deletion from a cloud storage provider
       },
-    ],    
+    ],
     matureContent: {
       type: Boolean,
       default: false,

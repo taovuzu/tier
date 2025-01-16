@@ -4,8 +4,8 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import mongoose from "mongoose";
 import { Post } from "../models/post.model.js";
 import { Subtier } from "../models/subtier.model.js";
-import { subtierFollower } from "../models/subtierFollower.model.js";
-import { PERMISSIONS, SUBTIER_PRIVACY_FLAG } from "../constants.js";
+import { SubtierFollower } from "../models/subtierFollower.model.js";
+// import { PERMISSIONS, SUBTIER_PRIVACY_FLAG } from "../constants.js";
 
 const getSubtierDetails = asyncHandler(async (req, res) => {
   const subtierUsername = req.params;
