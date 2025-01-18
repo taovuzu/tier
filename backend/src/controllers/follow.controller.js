@@ -14,7 +14,7 @@ const toggleUserFollowing = asyncHandler(async (req, res) => {
 
   if(!followee) throw new ApiError(400,"no user with such name exists");
 
-  const following = await Follower.findOne({followee,follower:req.user.username});
+  const following = await Follower.findOne({followee,follower:req.user._id});
   if(following){
     const deletedfollowing = await Follower.findByIdAndDelete(following._id);
     if(!deletedfollowing) throw new ApiError(400,"Could not unfollow the user");
@@ -22,7 +22,7 @@ const toggleUserFollowing = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200,{},"Unfollowed the user successfully"));
   }
-  const createdFollowing = await Follower.create({ followee,follower:req.user.username  });
+  const createdFollowing = await Follower.create({ followee,follower:req.user._id });
 
   if(!createdFollowing) throw new ApiError(400,"Could not follow the user");
 
@@ -39,7 +39,7 @@ const toggleSubtierFollowing = asyncHandler(async (req, res) => {
 
   if(!subtier) throw new ApiError(400,"no subtier with such name exists");
 
-  const following = await Follower.findOne({subtierFollowee,follower:req.user.username});
+  const following = await Follower.findOne({subtierFollowee:subtier._id,follower:req.user._id});
   if(following){
     const deletedfollowing = await Follower.findByIdAndDelete(following._id);
     if(!deletedfollowing) throw new ApiError(400,"Could not unfollow the subtier");
@@ -47,7 +47,7 @@ const toggleSubtierFollowing = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200,{},"Unfollowed the subtier successfully"));
   }
-  const createdFollowing = await Follower.create({ subtierFollowee,follower:req.user.username  });
+  const createdFollowing = await Follower.create({subtierFollowee:subtier._id,follower:req.user._id});
 
   if(!createdFollowing) throw new ApiError(400,"Could not follow the subtier");
 

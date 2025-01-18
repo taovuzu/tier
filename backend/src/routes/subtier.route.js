@@ -36,6 +36,6 @@ router.route("/:subtierUsername/update-subtier").post(verifyJWT, updateSubtierDe
 // router.route("/add-moderator").post(verifyJWT, addModeratorToSubtier);
 // router.route("/add-flair").post(verifyJWT, addFlair);
 // router.route("/delete-flair").post(verifyJWT, deleteFlair);
-router.route("/:subtierUsername/delete").delete(verifyJWT, deleteSubtier);
+router.route("/:subtierUsername").delete(verifyJWT, deleteSubtier);
 
 export default router;

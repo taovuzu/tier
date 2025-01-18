@@ -63,5 +63,10 @@ const uploadGIF = multer({
   fileFilter: gifFilter
 });
 
+const upload = multer({
+  storage: storage,
+  limits: {fileSize:50*1024*1024}
+});
 
-export { uploadImages, uploadVideos, uploadGIF };
+
+export { uploadImages, uploadVideos, uploadGIF,upload };

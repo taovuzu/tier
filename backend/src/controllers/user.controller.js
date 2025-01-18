@@ -32,7 +32,7 @@ const registerEmail = asyncHandler(async (req, res) => {
   }
   const existingUser =await User.findOne({ email });
   if (existingUser) {
-    return res.redirect(`${req.protocol}://${req.get("host")}/api/v1/users/login`);
+    return res.redirect(`${req.protocol}://${req.post("host")}/api/v1/users/login`);
   }
 
   req.session.email = email;
@@ -59,7 +59,8 @@ const verifyEmailByLink = asyncHandler(async (req, res) => {
     .update(unHashedToken)
     .digest("hex");
 
-  if (email !== req.session.email || hashedToken != req.session.hashedToken || Date.now() > req.session.tokenExpiry) {
+  console.log(req.session,email,hashedToken,req.session.email,req.session.tokenExpiry,Date.now());
+  if (email != req.session.email || hashedToken != req.session.hashedToken || Date.now() > req.session.tokenExpiry) {
     throw new ApiError(404, "Email or unHashedToken is invalid or expired");
   }
 
@@ -72,8 +73,9 @@ const verifyEmailByOTP = asyncHandler(async (req, res) => {
   if (!email || !otp || otp>=999999 || otp<=100000) {
     throw new ApiError(400, "Email or otp is empty or incomplete");
   }
+  console.log(req.session,email,req.session.email,req.session.tokenExpiry,Date.now());
 
-  if (email !== req.session.email || otp != req.session.otp || Date.now() > req.session.tokenExpiry) {
+  if (email != req.session.email || otp != req.session.otp || Date.now() > req.session.tokenExpiry) {
     throw new ApiError(404, "Email or otp is invalid or expired");
   }
 
@@ -82,7 +84,7 @@ const verifyEmailByOTP = asyncHandler(async (req, res) => {
 });
 
 const registerUser = asyncHandler(async (req, res) => {
-  const { username, email, password } = req.body;
+  const { username,  password } = req.body;
   
   if (!req.session.emailVerified) {
     throw new ApiError(404, "Email is not verified");
@@ -98,7 +100,7 @@ const registerUser = asyncHandler(async (req, res) => {
   session.startTransaction();
   let user;
   try {
-    const users = await User.create([{ email, username, password, isUsernameChanged:true }], { session });
+    const users = await User.create([{ email:req.session.email, username, password, isUsernameChanged:true }], { session });
     user = users[0];
     const userProfiles = await UserProfile.create([{ username, fullName: username }],{ session });
 

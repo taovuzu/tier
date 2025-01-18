@@ -59,13 +59,13 @@ const userLoginValidator = () => {
 
 const userRegisterValidator = () => {
   return [
-    body("email")
-      .trim()
-      .notEmpty()
-      .withMessage("Email is required")
-      .isEmail()
-      .withMessage("Please enter valid email")
-      .normalizeEmail(),
+    // body("email")
+    //   .trim()
+    //   .notEmpty()
+    //   .withMessage("Email is required")
+    //   .isEmail()
+    //   .withMessage("Please enter valid email")
+    //   .normalizeEmail(),
     body("username")
       .trim()
       .notEmpty()

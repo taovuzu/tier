@@ -8,6 +8,7 @@ import { Vote } from "../models/vote.model.js";
 import { User } from "../models/user.model.js";
 import { Subtier } from "../models/subtier.model.js"
 import { UserProfile } from "../models/profile.model.js";
+import { getMongoosePaginationOptions } from "../utils/helper.js"
 
 const getComments = asyncHandler(async (req, res) => {
   const { parent } = req.body;
@@ -19,7 +20,9 @@ const getComments = asyncHandler(async (req, res) => {
       {
         $match: {
           postId: new mongoose.Types.ObjectId(postId),
-          ...(parent ? { parent: new mongoose.Types.ObjectId(parent) } : {}),
+          ...(parent
+            ? { parent: new mongoose.Types.ObjectId(parent) } // Match child comments if parent is provided
+            : { parent: null }), // Match level zero comments if no parent is provided
         }, 
       },
       {

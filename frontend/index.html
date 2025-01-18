@@ -1,11 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>tier</title>
-	</head>
-	<body>
-		<button onclick="window.location.href='http://localhost:8080/api/v1/users/google'">Sign in with Google</button>
-	</body>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tier</title>
+</head>
+<body>
+    <!-- Button for Google Sign-In -->
+    <button onclick="window.location.href='http://localhost:8080/api/v1/users/google'">
+        Sign in with Google
+    </button>
+
+    <!-- Button for POST request -->
+    <button onclick="registerEmail()">Register Email</button>
+
+    <script>
+        function registerEmail() {
+            fetch('http://localhost:8080/api/v1/users/register-email', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email: 'yatindanger0001@gmail.com' })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Success:', data);
+                alert('Email registered successfully!');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error registering email');
+            });
+        }
+    </script>
+</body>
 </html>

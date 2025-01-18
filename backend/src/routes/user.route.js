@@ -1,6 +1,5 @@
 import { Router } from "express";
-import { registerUser, registerEmail, verifyEmailByLink, verifyEmailByOTP, loginUser, refreshAccessToken, logoutUser, userSocialLogin, forgotPasswordRequest, changeCurrentPassword, resetForgottenPassword, getCurrentUser, changeUsername } from "../controllers/user.controller.js"
-import { uploadVideos, uploadImages, uploadGIF } from "../middlewares/multer.middleware.js";
+import { registerUser, registerEmail, verifyEmailByLink, verifyEmailByOTP, loginUser, refreshAccessToken, logoutUser, userSocialLogin, forgotPasswordRequest, changeCurrentPassword, resetForgottenPassword, getCurrentUser, changeUsername } from "../controllers/user.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { emailValidator, usernameValidator, passwordValidator, userLoginValidator, userRegisterValidator, changeCurrentPasswordValidator, resetForgottenPasswordValidator } from "../validators/user.validator.js";
 import { validate } from "../validators/validate.js";

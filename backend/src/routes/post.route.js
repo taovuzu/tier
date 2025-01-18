@@ -11,7 +11,8 @@ import {
   deletePost,
   // reportPost,
 } from "../controllers/post.controller.js";
-import {uploadImages, uploadVideos, uploadGIF} from "../middlewares/multer.middleware.js"
+import {uploadImages, uploadVideos, uploadGIF,upload} from "../middlewares/multer.middleware.js"
+import { ApiError } from "../utils/ApiError.js";
 
 const router = Router();
 
@@ -21,19 +22,20 @@ router
   .route("/")
   .post(
     verifyJWT,
+    upload.none(),
     (req, res, next) => {
       const { contentType } = req.body;
 
-      if (contentType === "IMAGE") {
+      if (contentType == "IMAGE") {
         return uploadImages.array("images", 5)(req, res, next);
-      } else if (contentType === "VIDEO") {
+      } else if (contentType == "VIDEO") {
         return uploadVideos.single("video")(req, res, next);
-      } else if (contentType === "GIF") {
+      } else if (contentType == "GIF") {
         return uploadGIF.single("gif")(req, res, next);
-      } else if (contentType === "TEXT") {
+      } else if (contentType == "TEXT") {
         return next();
       } else {
-        return res.status(400).json({ error: "Invalid or missing contentType" });
+        throw new ApiError(400,"Invalid or missing contentType");
       }
     },
     createPost

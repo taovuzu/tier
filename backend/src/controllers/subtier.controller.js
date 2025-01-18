@@ -3,10 +3,11 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import mongoose from "mongoose";
 import { Subtier } from "../models/subtier.model.js";
+import {uploadOnCloudinary}  from "../utils/cloudinary.js"
 // import { PERMISSIONS, SUBTIER_PRIVACY_FLAG } from "../constants.js";
 
 const getSubtierDetails = asyncHandler(async (req, res) => {
-  const subtierUsername = req.params;
+  const {subtierUsername} = req.params;
   const subtierDetails = await Subtier.findOne({ subtierUsername });
   if (!subtierDetails) {
     throw new ApiError(400, "No subtier was found");
@@ -25,7 +26,7 @@ const getSubtierDetails = asyncHandler(async (req, res) => {
 });
 
 const updateSubtierAvatar = asyncHandler(async (req, res) => {
-  const subtierUsername = req.params;
+  const {subtierUsername} = req.params;
   if (!req.file?.path) {
     throw new ApiError(400, "Avatar is not uploaded by user");
   }
@@ -34,15 +35,9 @@ const updateSubtierAvatar = asyncHandler(async (req, res) => {
   if (!subtierDetails) {
     throw new ApiError(400, "No subtier was found");
   }
-  const isAdmin = subtierDetails.admins.some(
-    admin =>
-      admin.user == req.user.username &&
-      (admin.permissions.includes(PERMISSIONS.LEVEL1) || admin.permissions.includes(PERMISSIONS.LEVEL2))
-  );
-
-  if (!isAdmin) {
-    throw new ApiError(403, "You do not have permission to update the avatar");
-  }
+  if (!subtierDetails.admins.some(admin => admin.user === req.user.username)) {
+    throw new ApiError(403, "Unauthorized request");
+  }  
 
   const avatar = await uploadOnCloudinary(avatarPath);
 
@@ -59,7 +54,7 @@ const updateSubtierAvatar = asyncHandler(async (req, res) => {
 });
 
 const updateSubtierBanner = asyncHandler(async (req, res) => {
-  const subtierUsername = req.params;
+  const { subtierUsername } = req.params;
   if (!req.file?.path) {
     throw new ApiError(400, "Banner is not uploaded by user");
   }
@@ -68,15 +63,9 @@ const updateSubtierBanner = asyncHandler(async (req, res) => {
   if (!subtierDetails) {
     throw new ApiError(400, "No subtier was found");
   }
-  const isAdmin = subtierDetails.admins.some(
-    admin =>
-      admin.user == req.user.username &&
-      (admin.permissions.includes(PERMISSIONS.LEVEL1) || admin.permissions.includes(PERMISSIONS.LEVEL2))
-  );
-
-  if (!isAdmin) {
-    throw new ApiError(403, "You do not have permission to update the avatar");
-  }
+  if (!subtierDetails.admins.some(admin => admin.user === req.user.username)) {
+    throw new ApiError(403, "Unauthorized request");
+  }  
 
   const banner = await uploadOnCloudinary(bannerPath);
 
@@ -123,10 +112,10 @@ const updateSubtierDetails = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Subtier with such a name does not exist. Please select a valid subtierUsername.");
   }
 
-  if (!subtier.admins.includes(req.user.username)) {
+  if (!subtier.admins.some(admin => admin.user === req.user.username)) {
     throw new ApiError(403, "Unauthorized request");
   }
-
+  
   const updatedSubtier = await Subtier.findOneAndUpdate(
     { subtierUsername },
     { description, rules },
@@ -150,9 +139,10 @@ const deleteSubtier = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Subtier with such a name does not exist. Please select a valid subtierUsername.");
   }
 
-  if (!subtier.admins.includes(req.user.username)) {
+  if (!subtier.admins.some(admin => admin.user === req.user.username)) {
     throw new ApiError(403, "Unauthorized request");
   }
+  
 
   const deletedSubtier = await Subtier.findOneAndDelete({subtierUsername});
   if(!deleteSubtier){

@@ -35,11 +35,9 @@ const subtierSchema = new Schema(
     },
     avatar: {
       type: String,
-      required: true,
     },
     banner: {
       type: String,
-      required: true,
     },
     description: {
       type: String,

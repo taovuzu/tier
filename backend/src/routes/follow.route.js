@@ -4,8 +4,8 @@ import {toggleUserFollowing, toggleSubtierFollowing} from "../controllers/follow
 
 const router = Router();
 
-router.route("/:followee").post(verifyJWT,toggleUserFollowing);
-router.route("/:subtierFollowee").post(verifyJWT,toggleSubtierFollowing);
+router.route("/u/:followee").post(verifyJWT,toggleUserFollowing);
+router.route("/subtier/:subtierFollowee").post(verifyJWT,toggleSubtierFollowing);
 // router.route("/list/followers/:followee").get(getUserLoggedInOrNot, getFollowersListByFollowee);
 // router.route("/list/following/:followee").get(getUserLoggedInOrNot, getFollowingListByFollowee);
 

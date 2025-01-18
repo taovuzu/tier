@@ -8,6 +8,7 @@ import { Comment } from "../models/comment.model.js";
 import { Vote } from "../models/vote.model.js";
 import { User } from "../models/user.model.js";
 import { Subtier } from "../models/subtier.model.js"
+import { getMongoosePaginationOptions } from "../utils/helper.js"
 
 const postAggregationUtility = (req) => {
   return [
@@ -286,14 +287,13 @@ const editPost = asyncHandler(async (req, res) => {
   // Enrich and return the updated post
   const createdPost = await Post.aggregate([
     { $match: { _id: updatedPost._id } },
-    ...postCommonAggregation(req), // Add aggregations if needed
+    ...postAggregationUtility(req), // Add aggregations if needed
   ]);
 
   return res
     .status(200)
     .json(new ApiResponse(200, createdPost[0], "Post updated successfully"));
 });
-
 
 const createPost = asyncHandler(async (req, res) => {
   const { title, subtier, contentType, spoiler = false, matureContent = false, content } = req.body;
@@ -302,7 +302,7 @@ const createPost = asyncHandler(async (req, res) => {
     throw new ApiError(400,"Title not found");
   }
   // Validate `subtier` existence
-  const subtierExists = await Subtier.findById(subtier);
+  const subtierExists = await Subtier.findOne({subtierUsername:subtier});
   if (!subtierExists) {
     throw new ApiError(404, "Subtier does not exist");
   }
@@ -355,7 +355,7 @@ const createPost = asyncHandler(async (req, res) => {
   // Create the post
   const post = await Post.create({
     owner: req.user.username,
-    subtier,
+    subtier:subtierExists._id,
     title,
     contentType,
     content: content || "",
@@ -372,7 +372,7 @@ const createPost = asyncHandler(async (req, res) => {
   // Enrich and return the created post
   const createdPost = await Post.aggregate([
     { $match: { _id: post._id } },
-    ...postCommonAggregation(req), // Add aggregations if needed
+    ...postAggregationUtility(req), // Add aggregations if needed
   ]);
 
   return res
