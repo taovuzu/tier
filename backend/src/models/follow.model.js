@@ -2,11 +2,14 @@ import mongoose, { Schema } from "mongoose";
 import { Subtier } from "./subtier.model.js";
 import { User } from "./user.model.js";
 
-const subtierFollowerSchema = new Schema(
+const followerSchema = new Schema(
   {
-    subtier: {
+    subtierFollowee: {
       type: Schema.Types.ObjectId,
       ref: "Subtier"
+    },
+    followee: {
+      type: String,
     },
     follower: {
      type: Schema.Types.ObjectId,
@@ -17,4 +20,4 @@ const subtierFollowerSchema = new Schema(
 );
 
 
-export const SubtierFollower = mongoose.model("SubtierFollower", subtierFollowerSchema);
+export const Follower = mongoose.model("Follower", followerSchema);

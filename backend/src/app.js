@@ -40,6 +40,7 @@ import healthcheckRouter from "./routes/healthcheck.route.js";
 import commentRouter from "./routes/comment.route.js";
 import voteRouter from "./routes/vote.route.js";
 import postRouter from "./routes/post.route.js";
+import followRouter from "./routes/follow.route.js"
 // import moderationRouter from "./routes/moderation.route.js";
 // import reportRouter from "./routes/report.route.js";
 // import searchRouter from "./routes/search.route.js";
@@ -52,6 +53,7 @@ app.use("/api/v1/healthcheck", healthcheckRouter);
 app.use("/api/v1/comments", commentRouter);
 app.use("/api/v1/vote", voteRouter);
 app.use("/api/v1/posts", postRouter);
+app.use("/api/v1/follow",followRouter);
 // app.use("/api/v1/moderation", moderationRouter);
 // app.use("/api/v1/report", reportRouter);
 // app.use("/api/v1/search", searchRouter);
