@@ -48,7 +48,7 @@ import followRouter from "./routes/follow.route.js"
 // Routes Declaration
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/profile", profileRouter);
-app.use("/api/v1/subtier/:subtierUsername", subtierRouter);
+app.use("/api/v1/subtier", subtierRouter);
 app.use("/api/v1/healthcheck", healthcheckRouter);
 app.use("/api/v1/comments", commentRouter);
 app.use("/api/v1/vote", voteRouter);

@@ -2,9 +2,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import mongoose from "mongoose";
-import { Post } from "../models/post.model.js";
 import { Subtier } from "../models/subtier.model.js";
-import { SubtierFollower } from "../models/subtierFollower.model.js";
 // import { PERMISSIONS, SUBTIER_PRIVACY_FLAG } from "../constants.js";
 
 const getSubtierDetails = asyncHandler(async (req, res) => {
@@ -13,52 +11,17 @@ const getSubtierDetails = asyncHandler(async (req, res) => {
   if (!subtierDetails) {
     throw new ApiError(400, "No subtier was found");
   }
-  if (subtierDetails.privacyFlag == "private") {
-    if (!req.user) throw new ApiError(400, "Unauthorised request to access private subtier");
-    const isUserJoined = await subtierFollower.findOne({ subtier: subtierDetails._id, follower: req.user._id });
-    if (!isUserJoined) throw new ApiError(400, "Unauthorised request to access private subtier");
-    return res
-      .status(200)
-      .json(new ApiResponse(200, subtierDetails, "subtier details fetched successfully"));
-  }
+  // if (subtierDetails.privacyFlag == "private") {
+  //   if (!req.user) throw new ApiError(400, "Unauthorised request to access private subtier");
+  //   const isUserJoined = await subtierFollower.findOne({ subtier: subtierDetails._id, follower: req.user._id });
+  //   if (!isUserJoined) throw new ApiError(400, "Unauthorised request to access private subtier");
+  //   return res
+  //     .status(200)
+  //     .json(new ApiResponse(200, subtierDetails, "subtier details fetched successfully"));
+  // }
   return res
     .status(200)
     .json(new ApiResponse(200, subtierDetails, "subtier details fetched successfully"));
-});
-
-const followSubtier = asyncHandler(async (req, res) => {
-  const subtierUsername = req.params;
-  const subtierDetails = await Subtier.findOne({ subtierUsername });
-  if (!subtierDetails) {
-    throw new ApiError(400, "No subtier was found");
-  }
-  if (subtierDetails.privacyFlag != "public") {
-    throw new ApiError(400, "Cannot follow a private or protected community");
-  }
-  const userFollowing = await subtierFollower.create({
-    subtier: subtierDetails._id,
-    follower: req.user._id
-  })
-  if (!userFollowing) throw new ApiError(400, "Could not follow the subtier");
-  return res
-    .status(200)
-    .json(new ApiResponse(200, userFollowing, "Subtier followed successfully"));
-});
-
-const unfollowSubtier = asyncHandler(async (req, res) => {
-  const subtierUsername = req.params;
-  const subtierDetails = await Subtier.findOne({ subtierUsername });
-  if (!subtierDetails) {
-    throw new ApiError(400, "No subtier was found");
-  }
-  const userFollowing = await subtierFollower.findOneAndDelete({
-    subtier: subtierDetails._id,
-    follower: req.user._id
-  })
-  if (!userFollowing) throw new ApiError(400, "Could not unfollow the subtier");
-  return res
-    .status(200)
-    .json(new ApiResponse(200, {}, "Subtier unfollowed successfully"));
 });
 
 const updateSubtierAvatar = asyncHandler(async (req, res) => {
@@ -129,30 +92,86 @@ const updateSubtierBanner = asyncHandler(async (req, res) => {
 });
 
 const createSubtier = asyncHandler(async (req, res) => {
+  const { subtierUsername,description,rules} = req.body;
+  const subtier = await Subtier.findOne({subtierUsername});
+  if(subtier){
+    throw new ApiError(400,"Subtier with such name already exist ,please select valid subtierUsername");
+  }
 
+  const createdSubtier = await Subtier.create(
+    {
+      subtierUsername,
+      description,
+      rules,
+      admins: [{ user: req.user.username }]
+    }
+  );
+  if(!createdSubtier)
+    throw new ApiError(400,"could not create subtier");
+
+  return res
+  .status(200)
+  .json(new ApiResponse(200,createdSubtier,"Subtier created successfully"));
 });
 
 const updateSubtierDetails = asyncHandler(async (req, res) => {
+  const { description, rules } = req.body; // Corrected req.body()
+  const { subtierUsername } = req.params;
 
+  const subtier = await Subtier.findOne({ subtierUsername });
+  if (!subtier) {
+    throw new ApiError(400, "Subtier with such a name does not exist. Please select a valid subtierUsername.");
+  }
+
+  if (!subtier.admins.includes(req.user.username)) {
+    throw new ApiError(403, "Unauthorized request");
+  }
+
+  const updatedSubtier = await Subtier.findOneAndUpdate(
+    { subtierUsername },
+    { description, rules },
+    { new: true }
+  );
+
+  if (!updatedSubtier) {
+    throw new ApiError(400, "Could not update subtier");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, updatedSubtier, "Subtier updated successfully"));
 });
 
 
 const deleteSubtier = asyncHandler(async (req, res) => {
+  const { subtierUsername } = req.params;
+  const subtier = await Subtier.findOne({ subtierUsername });
+  if (!subtier) {
+    throw new ApiError(400, "Subtier with such a name does not exist. Please select a valid subtierUsername.");
+  }
 
+  if (!subtier.admins.includes(req.user.username)) {
+    throw new ApiError(403, "Unauthorized request");
+  }
+
+  const deletedSubtier = await Subtier.findOneAndDelete({subtierUsername});
+  if(!deleteSubtier){
+    throw new ApiError(400,"Could not delete the subtier");
+  }
+
+  return res
+  .status(200)
+  .json(new ApiResponse(200,{},"Subtier deleted successfully"));
 });
 
-const getSubtierPosts = asyncHandler(async (req, res) => {
+// const getSubtierModerators = asyncHandler(async (req, res) => {
 
-});
+// });
 
-const getSubtierModerators = asyncHandler(async (req, res) => {
+// const addModeratorToSubtier = asyncHandler(async (req, res) => {
 
-});
-
-const addModeratorToSubtier = asyncHandler(async (req, res) => {
-
-});
+// });
 
 export {
-  getSubtierDetails,  updateSubtierAvatar,  updateSubtierBanner,  createSubtier,  updateSubtierDetails,  deleteSubtier,  getSubtierPosts,  getSubtierModerators,  addModeratorToSubtier,  followSubtier,  unfollowSubtier
+  getSubtierDetails,  updateSubtierAvatar,  updateSubtierBanner,  createSubtier,  updateSubtierDetails,  deleteSubtier
 }

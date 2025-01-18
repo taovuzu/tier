@@ -22,9 +22,7 @@ const subtierSchema = new Schema(
       type: [
         {
           user: {
-            type: Schema.Types.ObjectId,
-            ref: "UserProfile",
-            required: true,
+            type: String
           },
           // permissions: {
           //   type: [String], // Array of strings to allow multiple permissions
