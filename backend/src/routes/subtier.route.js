@@ -13,7 +13,6 @@ import {
   // removeAdminFromSubtier,
   // removeUserFromSubtier,
   deleteSubtier,
-  // getSubtierPosts,
   // getSubtierModerators,
   addModeratorToSubtier,
   // addFlair,
@@ -25,7 +24,6 @@ import {
 const router = Router();
 
 router.route("/").get(getUserLoggedInOrNot,getSubtierDetails);
-// router.route("/post").get(getSubtierPosts);
 // router.route("/moderators").get(getSubtierModerators);
 
 //secure routes

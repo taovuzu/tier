@@ -37,7 +37,7 @@ import userRouter from "./routes/user.route.js";
 import profileRouter from "./routes/profile.route.js";
 import subtierRouter from "./routes/subtier.route.js";
 import healthcheckRouter from "./routes/healthcheck.route.js";
-// import commentRouter from "./routes/comment.route.js";
+import commentRouter from "./routes/comment.route.js";
 // import voteRouter from "./routes/vote.route.js";
 // import postRouter from "./routes/post.route.js";
 // import moderationRouter from "./routes/moderation.route.js";
@@ -45,11 +45,11 @@ import healthcheckRouter from "./routes/healthcheck.route.js";
 // import searchRouter from "./routes/search.route.js";
 
 // Routes Declaration
-// app.use("/api/v1/users", userRouter);
-// app.use("/api/v1/profile", profileRouter);
-// app.use("/api/v1/subtier/:subtierUsername", subtierRouter);
-// app.use("/api/v1/healthcheck", healthcheckRouter);
-// app.use("/api/v1/comments", commentRouter);
+app.use("/api/v1/users", userRouter);
+app.use("/api/v1/profile", profileRouter);
+app.use("/api/v1/subtier/:subtierUsername", subtierRouter);
+app.use("/api/v1/healthcheck", healthcheckRouter);
+app.use("/api/v1/comments", commentRouter);
 // app.use("/api/v1/likes", voteRouter);
 // app.use("/api/v1/posts", postRouter);
 // app.use("/api/v1/moderation", moderationRouter);
