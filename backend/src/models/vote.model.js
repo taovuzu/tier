@@ -1,7 +1,7 @@
 import mongoose ,{Schema} from "mongoose";
-import { User } from "./user.model";
-import { Post } from "./post.model";
-import { Comment } from "./comment.model";
+import { User } from "./user.model.js";
+import { Post } from "./post.model.js";
+import { Comment } from "./comment.model.js";
 
 const voteSchema = new Schema(
   {
