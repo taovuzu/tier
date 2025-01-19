@@ -24,7 +24,7 @@ const postSchema = new Schema(
     },
     contentType: {
       type: String,
-      enum: ["VIDEO", "IMAGE", "TEXT"],
+      enum: ["VIDEO", "IMAGE", "TEXT", "GIF"],
       required: true,
     },
     content: {
@@ -33,16 +33,18 @@ const postSchema = new Schema(
     },
     images: [
       {
-        url: { type: String, required: true },
-        publicId: { type: String, required: true }, // To support deletion from a cloud storage provider
+        url: { type: String },
+        publicId: { type: String },
       },
     ],
-    videos: [
-      {
-        url: { type: String, required: true },
-        publicId: { type: String, required: true }, // To support deletion from a cloud storage provider
-      },
-    ],
+    videos: {
+      url: { type: String },
+      publicId: { type: String },
+    },
+    gif: {
+      url: { type: String },
+      publicId: { type: String },
+    },
     matureContent: {
       type: Boolean,
       default: false,

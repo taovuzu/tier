@@ -18,7 +18,7 @@ const imageFilter = (req, file, cb) => {
   const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
 
   if (!mimetype || !extname) {
-    return cb( new ApiError(400,"Only images upload is allowed"), false);
+    return cb(new ApiError(400, "Only images upload is allowed"), false);
   }
   cb(null, true);
 };
@@ -45,6 +45,25 @@ const videoFilter = (req, file, cb) => {
   cb(null, true);
 };
 
+const postFilter = (req, file, cb) => {
+  const imageFiletypes = /jpeg|jpg|png/;
+  const videoFiletypes = /mp4|mov|avi/;
+  const gifFiletypes = /gif/;
+
+  const mimetype = imageFiletypes.test(file.mimetype) ||
+    videoFiletypes.test(file.mimetype) ||
+    gifFiletypes.test(file.mimetype);
+
+  const extname = imageFiletypes.test(path.extname(file.originalname).toLowerCase()) ||
+    videoFiletypes.test(path.extname(file.originalname).toLowerCase()) ||
+    gifFiletypes.test(path.extname(file.originalname).toLowerCase());
+
+  if (!mimetype || !extname) {
+    return cb(new ApiError(400, "Unsupported file type! Only images, videos, or GIFs are allowed."), false);
+  }
+  cb(null, true);
+};
+
 const uploadImages = multer({
   storage: storage,
   limits: { fileSize: 10 * 1024 * 1024 },
@@ -65,8 +84,20 @@ const uploadGIF = multer({
 
 const upload = multer({
   storage: storage,
-  limits: {fileSize:50*1024*1024}
+  limits: { fileSize: 50 * 1024 * 1024 }
 });
 
+const uploadPost = multer({
+  storage: storage,
+  fileFilter: postFilter,
+  limits: {
+    fileSize: 50 * 1024 * 1024,
+  }
+}).fields([
+  { name: "IMAGES", maxCount: 5 }, // Up to 5 images
+  { name: "VIDEOS", maxCount: 1 }, // Only 1 video
+  { name: "GIF", maxCount: 1 }    // Only 1 GIF
+]);
 
-export { uploadImages, uploadVideos, uploadGIF,upload };
+
+export { uploadImages, uploadVideos, uploadGIF, upload, uploadPost };

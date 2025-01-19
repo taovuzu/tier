@@ -158,7 +158,7 @@ const getPostsByUsername = asyncHandler(async (req, res) => {
   const { page = 1, limit = 10 } = req.query;
   const { username } = req.params;
 
-  const user = await  User.findOne({
+  const user = await User.findOne({
     username: username.toLowerCase(),
   })
 
@@ -264,8 +264,8 @@ const editPost = asyncHandler(async (req, res) => {
   }
 
   // Update the fields if provided
-  if(title=="" || title==undefined){
-    throw new ApiError(400,"Title not found");
+  if (title == "" || title == undefined) {
+    throw new ApiError(400, "Title not found");
   }
   if (title) {
     post.title = title;
@@ -295,74 +295,31 @@ const editPost = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, createdPost[0], "Post updated successfully"));
 });
 
-const createPost = asyncHandler(async (req, res) => {
-  const { title, subtier, contentType, spoiler = false, matureContent = false, content } = req.body;
+const createPostText = asyncHandler(async (req, res) => {
+  const { title, subtier, spoiler = false, matureContent = false, content } = req.body;
 
-  if(title=="" || title==undefined){
-    throw new ApiError(400,"Title not found");
+  if (title.trim == "" || title == undefined) {
+    throw new ApiError(400, "Title not found");
   }
+
+  if (!content || content.trim() === "" ) {
+    throw new ApiError(400, "Text content cannot be empty for TEXT content type");
+  }
+
   // Validate `subtier` existence
-  const subtierExists = await Subtier.findOne({subtierUsername:subtier});
+  const subtierExists = await Subtier.findOne({ subtierUsername: subtier });
   if (!subtierExists) {
     throw new ApiError(404, "Subtier does not exist");
   }
 
-  // Initialize arrays to store Cloudinary URLs
-  let imageUrls = [];
-  let videoUrl = "";
-
-  // Handle file uploads based on contentType
-  if (contentType === "IMAGE") {
-    if (!req.files?.images?.length) {
-      throw new ApiError(400, "At least one image is required for IMAGE content type");
-    }
-
-    // Upload images to Cloudinary
-    imageUrls = await Promise.all(
-      req.files.images.map(async (image) => {
-        const uploadedImage = await uploadOnCloudinary(image.path, "social-posts"); // Upload to Cloudinary
-        if (!uploadedImage) {
-          throw new ApiError(500, "Error uploading images to Cloudinary");
-        }
-        return {
-          url: uploadedImage.url,
-          publicId: uploadedImage.public_id, // Store public_id for potential deletions later
-        };
-      })
-    );
-  } else if (contentType === "VIDEO") {
-    if (!req.files?.video) {
-      throw new ApiError(400, "A video is required for VIDEO content type");
-    }
-
-    // Upload video to Cloudinary
-    const uploadedVideo = await uploadOnCloudinary(req.files.video[0].path, "social-posts");
-    if (!uploadedVideo) {
-      throw new ApiError(500, "Error uploading video to Cloudinary");
-    }
-    videoUrl = {
-      url: uploadedVideo.url,
-      publicId: uploadedVideo.public_id, // Store public_id for potential deletions later
-    };
-  } else if (contentType === "TEXT") {
-    if (!content || content.trim() === "") {
-      throw new ApiError(400, "Text content cannot be empty for TEXT content type");
-    }
-  } else {
-    throw new ApiError(400, "Invalid content type");
-  }
-
-  // Create the post
   const post = await Post.create({
     owner: req.user.username,
-    subtier:subtierExists._id,
+    subtier: subtierExists._id,
     title,
-    contentType,
-    content: content || "",
+    contentType: "TEXT",
+    content,
     spoiler,
     matureContent,
-    images: imageUrls, // Array of uploaded images
-    videos: videoUrl ? [videoUrl] : [], // Array with uploaded video
   });
 
   if (!post) {
@@ -380,19 +337,117 @@ const createPost = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, createdPost[0], "Post created successfully"));
 });
 
+const createPostImage = asyncHandler(async (req, res) => {
+  const { title, subtier, contentType, spoiler = false, matureContent = false, content } = req.body;
+
+  // Validate `title`
+  if (!title || title.trim() === "") {
+    throw new ApiError(400, "Title is required");
+  }
+
+  // Validate `subtier` existence
+  const subtierExists = await Subtier.findOne({ subtierUsername: subtier });
+  if (!subtierExists) {
+    throw new ApiError(404, "Subtier does not exist");
+  }
+
+  // Initialize arrays to store Cloudinary URLs
+  let imageUrls = [];
+  let videoUrl = "";
+  let gifUrl = "";
+
+  // Handle file uploads based on contentType
+  if (contentType === "IMAGE") {
+    if (!req.files?.IMAGES?.length) {
+      throw new ApiError(400, "At least one image is required for IMAGE content type");
+    }
+
+    // Upload images to Cloudinary
+    imageUrls = await Promise.all(
+      req.files.IMAGES.map(async (image) => {
+        // Ensure image.path exists and is correct
+        const uploadedImage = await uploadOnCloudinary(image.path); // Make sure image.path is correct here
+        if (!uploadedImage) {
+          throw new ApiError(500, "Error uploading image to Cloudinary");
+        }
+        return {
+          url: uploadedImage.url,
+          publicId: uploadedImage.public_id, // Store public_id for potential deletions later
+        };
+      })
+    );
+  } else if (contentType === "VIDEO") {
+    if (!req.files?.VIDEOS?.length) {
+      throw new ApiError(400, "A video is required for VIDEO content type");
+    }
+
+    // Upload video to Cloudinary
+    const uploadedVideo = await uploadOnCloudinary(req.files.VIDEOS[0].path);
+    if (!uploadedVideo) {
+      throw new ApiError(500, "Error uploading video to Cloudinary");
+    }
+    videoUrl = {
+      url: uploadedVideo.url,
+      publicId: uploadedVideo.public_id, // Store public_id for potential deletions later
+    };
+  } else if (contentType === "GIF") {
+    if (!req.files?.GIF?.length) {
+      throw new ApiError(400, "A GIF is required for GIF content type");
+    }
+
+    // Upload GIF to Cloudinary
+    const uploadedGif = await uploadOnCloudinary(req.files.GIF[0].path);
+    if (!uploadedGif) {
+      throw new ApiError(500, "Error uploading GIF to Cloudinary");
+    }
+    gifUrl = {
+      url: uploadedGif.url,
+      publicId: uploadedGif.public_id, // Store public_id for potential deletions later
+    };
+  } else {
+    throw new ApiError(400, "Invalid content type. Must be IMAGE, VIDEO, or GIF.");
+  }
+
+  // Create the post
+  const post = await Post.create({
+    owner: req.user.username,
+    subtier: subtierExists._id,
+    title,
+    contentType,
+    spoiler,
+    matureContent,
+    images: imageUrls, // Array of uploaded images
+    videos: videoUrl, // Array with uploaded video
+    gifs: gifUrl, // Array with uploaded GIF
+  });
+
+  if (!post) {
+    throw new ApiError(500, "Error while creating the post");
+  }
+
+  // Enrich and return the created post
+  const createdPost = await Post.aggregate([
+    { $match: { _id: post._id } },
+    ...postAggregationUtility(req), // Add aggregations if needed
+  ]);
+
+  return res
+    .status(201)
+    .json(new ApiResponse(201, createdPost[0], "Post created successfully"));
+});
 
 const deletePost = asyncHandler(async (req, res) => {
   const { postId } = req.params;
 
   const post = await Post.findById(postId);
-  if(!post ){
-    throw new ApiError(400,"Post does not exist");
+  if (!post) {
+    throw new ApiError(400, "Post does not exist");
   }
   post.deletionFlag = true;
   await post.save();
   return res
-  .status(200)
-  .json(new ApiResponse(200,{},"Post deleted successfully"));
+    .status(200)
+    .json(new ApiResponse(200, {}, "Post deleted successfully"));
 });
 
-export { getPosts, getMyPosts, getPostsByUsername, getPostsBySubtierUsername, getPostById, editPost, deletePost, createPost };
+export { getPosts, getMyPosts, getPostsByUsername, getPostsBySubtierUsername, getPostById, editPost, deletePost, createPostImage, createPostText };
